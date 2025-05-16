@@ -1,0 +1,360 @@
+﻿@inject HttpClient Http
+@inject NavigationService NavigationService
+@inject IJSRuntime JS
+
+@if (IsVisible)
+{
+    <div class="modal" tabindex="-1" role="dialog" style="display:block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Pet</h5>
+                    <button type="button" class="close" aria-label="Close" @onclick="Hide">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="userPassword">Pet Species:</label>
+                                            <input type="text" class="form-control" id="userPassword" @bind="petModel.species">
+                                        </div>
+                    <div class="form-group">
+                        <label for="username">Pet Name:</label>
+                        <input type="text" class="form-control" id="username" @bind="petModel.name">
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Pet Age:</label>
+                        <input type="number" class="form-control" id="userEmail" @bind="petModel.age">
+                    </div>
+                    <div class="form-group">
+                        <label for="userPassword">Pet Breed:</label>
+                            @if (petModel.species == "Cat")
+                            {
+                                <select class="form-control" id="petBreed" @bind="petModel.breed">
+                                @foreach (var breed in CatBreeds)
+                                {
+                                    <option value="@breed">@breed</option>
+                                }
+                                                                    </select>
+                            }
+                            else if (petModel.species == "Dog")
+                            {
+                                <select class="form-control" id="petBreed" @bind="petModel.breed">
+                                @foreach (var breed in DogBreeds)
+                                {
+                                        <option value="@breed">@breed</option>
+                                }
+                                                                        </select>
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" id="userPassword" @bind="petModel.breed">
+                            }
+                    </div>
+                    <div class="form-group">
+                        <label for="userPassword">Pet Sex:</label>
+                        <input type="text" class="form-control" id="userPassword" @bind="petModel.sex">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="Save">Add Pet</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Hide">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsVisible { get; set; }
+    private Models.Pet petModel = new Models.Pet();
+    private string username;
+    private string userEmail;
+    private string userPassword;
+    private string userId;
+    
+    public void Show()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    private async void Save()
+    {
+        userId = await JS.InvokeAsync<string>("blazorExtensions.GetLocalStorage", "userId");
+        petModel.userid = userId;
+        var response = await Http.PostAsJsonAsync("/pet", petModel);
+        if (response.IsSuccessStatusCode)
+        {
+            await JS.InvokeAsync<object>("alert", "Pet was added successfully.");
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+        }
+        Hide();
+    }
+   private List<string> CatBreeds = new List<string>
+    {
+        "Abyssinian",
+        "American Bobtail",
+        "American Shorthair",
+        "Bengal",
+        "Burmese",
+        "Colorpoint Shorthair",
+        "Egyptian Mau",
+        "Highlander",
+        "Kanaani",
+        "Korat",
+        "Maine Coon",
+        "Munchkin",
+        "Ocicat",
+        "Persian",
+        "Ragdoll",
+        "Scottish Fold",
+        "Sphynx",
+        "Toybob",
+        "Turkish Van",
+        "York Chocolate",
+        "Other"
+    };
+    
+    private List<string> DogBreeds = new List<string>
+    {
+       "Affenpinscher",
+    "Afghan Hound",
+    "Airedale Terrier",
+    "Akbash",
+    "Akita",
+    "Alaskan Malamute",
+    "American Bulldog",
+    "American Eskimo Dog",
+    "American Hairless Terrier",
+    "American Staffordshire Terrier",
+    "Anatolian Shepherd",
+    "Australian Cattle Dog/Blue or Red Heeler",
+    "Australian Kelpie",
+    "Australian Shepherd",
+    "Australian Terrier",
+    "Basenji",
+    "Basset Hound",
+    "Beagle",
+    "Beagle - Lemon",
+    "Bearded Collie",
+    "Beauceron",
+    "Belgian Shepherd Dog Sheepdog",
+    "Belgian Shepherd Laekenois",
+    "Belgian Shepherd Malinois",
+    "Belgian Shepherd Tervuren",
+    "Bernese Mountain Dog",
+    "Bichon Frise",
+    "Black and Tan Coonhound",
+    "Black Labrador Retriever",
+    "Black Mouth Cur",
+    "Bloodhound",
+    "Bluetick Coonhound",
+    "Border Collie",
+    "Border Terrier",
+    "Borzoi",
+    "Boston Terrier",
+    "Bouvier des Flanders",
+    "Boxer",
+    "Boykin Spaniel",
+    "Briard",
+    "Brittany Spaniel",
+    "Brussels Griffon",
+    "Bull Terrier",
+    "Bullmastiff",
+    "Cairn Terrier",
+    "Canaan Dog",
+    "Cane Corso Mastiff",
+    "Carolina Dog",
+    "Catahoula Leopard Dog",
+    "Cattle Dog",
+    "Cavalier King Charles Spaniel",
+    "Chesapeake Bay Retriever",
+    "Chihuahua - Long Hair",
+    "Chihuahua - Short Hair",
+    "Chinese Crested Dog",
+    "Chinese Foo Dog",
+    "Chiweenie",
+    "Chocolate Labrador Retriever",
+    "Chow Chow",
+    "Chug (Chi-Pug)",
+    "Clumber Spaniel",
+    "Cockapoo",
+    "Cocker Spaniel",
+    "Collie",
+    "Coonhound",
+    "Corgi",
+    "Coton de Tulear",
+    "Dachshund - Long Hair",
+    "Dachshund - Short Hair",
+    "Dalmatian",
+    "Dandi Dinmont Terrier",
+    "Doberman Pinscher",
+    "Dogo Argentino",
+    "Dogue de Bordeaux",
+    "Dutch Shepherd",
+    "English Bulldog",
+    "English Cocker Spaniel",
+    "English Creme Golden Retriever",
+    "English Pointer",
+    "English Setter",
+    "English Shepherd",
+    "English Springer Spaniel",
+    "English Toy Spaniel",
+    "Eskimo Dog",
+    "Estrela Mountain Dog",
+    "Feist",
+    "Field Spaniel",
+    "Fila Brasileiro",
+    "Finnish Lapphund",
+    "Finnish Spitz",
+    "Flat-coated Retriever",
+    "Fox Terrier",
+    "Foxhound",
+    "French Blue Gascon Hound",
+    "French Bulldog",
+    "German Pinscher",
+    "German Shepherd Dog",
+    "German Shorthaired Pointer",
+    "German Wirehaired Pointer",
+    "Glen of Imaal Terrier",
+    "Golden Retriever",
+    "Goldendoodle",
+    "Gordon Setter",
+    "Great Dane",
+    "Great Pyrenees",
+    "Greater Swiss Mountain Dog",
+    "Greyhound",
+    "Havanese",
+    "Hound",
+    "Hovawart",
+    "Husky",
+    "Huskypoo",
+    "Ibizan Hound",
+    "Illyrian Sheepdog",
+    "Irish Setter",
+    "Irish Terrier",
+    "Irish Wolfhound",
+    "Italian Greyhound",
+    "Italian Spinone",
+    "Jack Russell Terrier",
+    "Jack Russell Terrier (Parson Russell Terrier)",
+    "Japanese Chin",
+    "Jindo",
+    "Kai Dog",
+    "Karelian Bear Dog",
+    "Keeshond",
+    "Kerry Blue Terrier",
+    "Kishu",
+    "Komondor",
+    "Kuvasz",
+    "Kyi Leo",
+    "Labradoodle",
+    "Labrador Retriever",
+    "Lancashire Heeler",
+    "Leonberger",
+    "Lhasa Apso",
+    "Maltese",
+    "Maltipoo",
+    "Manchester Terrier",
+    "Maremma Sheepdog",
+    "Mastiff",
+    "McNab",
+    "Miniature Pinscher",
+    "Mix",
+    "Morkie",
+    "Mountain Cur",
+    "Mountain Dog",
+    "Neapolitan Mastiff",
+    "New Guinea Singing Dog",
+    "Newfoundland Dog",
+    "Norfolk Terrier",
+    "Norwegian Elkhound",
+    "Norwich Terrier",
+    "Nova Scotia Duck-Tolling Retriever",
+    "Old English Sheepdog",
+    "Otterhound",
+    "Papillon",
+    "Patterdale Terrier (Fell Terrier)",
+    "Pekingese",
+    "Petit Basset Griffon Vendeen",
+    "Pharaoh Hound",
+    "Pit Bull Terrier",
+    "Plott Hound",
+    "Podengo Portugueso",
+    "Pointer",
+    "Polish Lowland Sheepdog",
+    "Pomeranian",
+    "Poodle",
+    "Portuguese Water Dog",
+    "Presa Canario",
+    "Pug",
+    "Puggle",
+    "Puli",
+    "Pumi",
+    "Rat Terrier",
+    "Redbone Coonhound",
+    "Retriever",
+    "Rhodesian Ridgeback",
+    "Rottweiler",
+    "Saint Bernard St. Bernard",
+    "Saluki",
+    "Samoyed",
+    "Schipperke",
+    "Schnauzer",
+    "Schnauzer - Giant",
+    "Scottish Deerhound",
+    "Scottish Terrier Scottie",
+    "Sealyham Terrier",
+    "Setter",
+    "Shar Pei",
+    "Sheep Dog",
+    "Shepherd",
+    "Shetland Sheepdog Sheltie",
+    "Shiba Inu",
+    "Shih Tzu",
+    "Siberian Husky",
+    "Silky Terrier",
+    "Skye Terrier",
+    "Sloughi",
+    "Smooth Fox Terrier",
+    "Spaniel",
+    "Spitz",
+    "Staffordshire Bull Terrier",
+    "Standard Poodle",
+    "Swedish Vallhund",
+    "Terrier",
+    "Thai Ridgeback",
+    "Tibetan Mastiff",
+    "Tibetan Spaniel",
+    "Tibetan Terrier",
+    "Tosa Inu",
+    "Toy Fox Terrier",
+    "Treeing Walker Coonhound",
+    "Vizsla",
+    "Weimaraner",
+    "Welsh Corgi",
+    "Welsh Springer Spaniel",
+    "Welsh Terrier",
+    "West Highland White Terrier Westie",
+    "Wheaten Terrier",
+    "Whippet",
+    "White German Shepherd",
+    "Wire Haired Dachshund",
+    "Wire-haired Pointing Griffon",
+    "Wirehaired Terrier",
+    "Yellow Labrador Retriever",
+    "Yorkiepoo",
+    "Yorkshire Terrier Yorkie",
+    "Other"
+    };
+}

@@ -1,0 +1,40 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@inject AdminService AS
+
+<div class="page">
+    <div class="sidebar">
+        <!-- Nav Menu only appear if we dont have these routes! -->
+        @if (!Navigation.Uri.Contains("login", StringComparison.OrdinalIgnoreCase) &&
+        !Navigation.Uri.Contains("register", StringComparison.OrdinalIgnoreCase))
+        {
+            @if (AS.IsAdmin)
+            {
+                <NavMenuAdmin />
+            }
+            else
+            {
+                <NavMenu />
+            }
+
+        }
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <img src="../Assets/halo-hi copyResize.png" alt="Logo" />
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+<Footer></Footer>

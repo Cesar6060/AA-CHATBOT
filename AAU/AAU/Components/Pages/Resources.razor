@@ -1,0 +1,63 @@
+﻿@page "/resources"
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+
+<h3 class="mb-4">PDF Resources</h3>
+
+<div class="resource-list">
+    <div class="resource-item" @onclick="() => OpenPdf(OSANEL)">
+        Organizational Structure and Email List
+    </div>
+    <div class="resource-item" @onclick="() => OpenPdf(BIYFFDMM2024)">
+        Bringing Your First Foster Guide March 2024
+    </div>
+    <div class="resource-item" @onclick="() => OpenPdf(SBSAG)">
+        Step by Step Adoption Guide
+    </div>
+    <div class="resource-item" @onclick="() => OpenPdf(FCL)">
+        Foster Checklist March 2024
+    </div>
+</div>
+
+<style>
+    .resource-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; 
+    }
+    
+    .resource-item {
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da; 
+        padding: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .resource-item:hover {
+        background-color: #e2e6ea;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .resource-item h3 {
+        font-size: 1.25rem;
+    }
+</style>
+
+@code {
+    private string OSANEL = "2024 AAUPR Organizational Structure and Email List";
+    private string BIYFFDMM2024 = "AAUPR Bringing In Your First Foster Dog Mar 2024";
+    private string SBSAG = "AAUPR Step By Step Adoption Guide Mar 2024";
+    private string FCL = "Foster Checklist_March 2024";
+    private async Task OpenPdf(string pdf)
+    {
+        var pdfPath = $"/Assets/PDFS/{pdf}.pdf";
+        await JS.InvokeVoidAsync("openPdf", pdfPath);
+    }
+
+}
+

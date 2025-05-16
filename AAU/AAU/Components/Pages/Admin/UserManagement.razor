@@ -1,0 +1,136 @@
+﻿@page "/admin/users"
+@using System.Text
+@using System.Text.Json
+@using AAU.Components.Modals
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<h3>User Management</h3>
+<button type="button" class="btn btn-primary" @onclick="OpenModal">Add User</button>
+<UserAddModal @ref="userModal" />
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Password</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (users != null)
+        {
+        @foreach (var user in users)
+        {
+            <tr>
+                <td>
+                    <InputText @bind-Value="user.email"/>
+                </td>
+                <td>
+                    <InputText @bind-Value="user.username"/>
+                </td>
+                <td>
+                    <select @bind="user.userlevel">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </td>
+                <td>
+                    <InputText type="password" @bind-Value="user.password"/>
+                </td>
+                <td>
+                    <button @onclick="() => UpdateUserRole(user)"class="btn btn-danger">Update User</button>
+                    <button @onclick="() => DeleteUser(user.id)"class="btn btn-warning">Delete User</button>
+                </td>
+            </tr>
+        }
+        }
+        </tbody>
+    </table>
+</div>
+
+@if (errorMessage != null)
+{
+<div class="alert alert-danger">@errorMessage</div>
+}
+
+@code {
+private List<User> users;
+private string errorMessage;
+private UserAddModal userModal;
+
+
+protected override async Task OnInitializedAsync()
+{
+await LoadUsers();
+}
+
+private async Task LoadUsers()
+{
+try
+{
+users = await Http.GetFromJsonAsync<List<User>>("/user/all");
+}
+catch (Exception ex)
+{
+errorMessage = $"Error loading users: {ex.Message}";
+}
+}
+
+private async Task UpdateUserRole(User user)
+{
+    var response = await Http.PatchAsJsonAsync("/user/updaterole", user);
+     if (response.IsSuccessStatusCode)
+     {
+         await JS.InvokeAsync<object>("alert", "User was Updated successfully.");
+     }
+     else
+     {
+         var errorContent = await response.Content.ReadAsStringAsync();
+     }
+}
+
+private async Task DeleteUser(int userId)
+{
+    var confirmed = await JS.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
+    if (confirmed)
+    {
+        Console.WriteLine($"User ID Request: {userId}"); 
+        var content = new StringContent(userId.ToString(), Encoding.UTF8, "application/json");
+        var request = new HttpRequestMessage(HttpMethod.Delete, "/user/delete")
+        {
+            Content = content
+        };
+        
+        var response = await Http.SendAsync(request);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadUsers(); // Reload users after deletion
+        }
+        else
+        {
+            // Log the error response content for debugging
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response: {responseContent}");
+            errorMessage = "Failed to delete user.";
+        }
+    }
+}
+
+private void OpenModal()
+{
+    userModal.Show();
+}
+
+
+
+private async Task PromptPasswordReset(User user)
+{
+}
+}

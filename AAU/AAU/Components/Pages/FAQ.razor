@@ -1,0 +1,46 @@
+﻿@page "/faq"
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+
+<h3>Frequently Asked Questions</h3>
+
+@if (faqs != null)
+{
+<div class="container">
+    <div class="row">
+        @foreach (var faq in faqs)
+        {
+        <div class="col-md-12 col-lg-8 mb-4">
+            <div class="faq-card p-3 border rounded">
+                <h5>@faq.question</h5>
+                <p>@faq.answer</p>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+}
+
+@code {
+private List<Models.FAQ> faqs;
+private string errorMessage;
+
+protected override async Task OnInitializedAsync()
+{
+await LoadFaq();
+}
+
+private async Task LoadFaq()
+{
+try
+{
+faqs = await Http.GetFromJsonAsync<List<Models.FAQ>>("/faq/all");
+}
+catch (Exception ex)
+{
+errorMessage = $"Error loading FAQs: {ex.Message}";
+}
+}
+}

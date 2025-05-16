@@ -1,0 +1,77 @@
+﻿@page "/register"
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationService NavigationService
+@rendermode InteractiveServer
+
+<h3>Register</h3>
+
+<div class="register-container">
+    <EditForm Model="@registerModel" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="email">Please Enter Your Email</label>
+            <InputText id="email" class="form-control" @bind-Value="registerModel.Email" />
+            <ValidationMessage For="@(() => registerModel.Email)" />
+        </div>
+
+        <div class="form-group">
+            <label for="username">Please Create a Username</label>
+            <InputText id="username" class="form-control" @bind-Value="registerModel.Username" />
+            <ValidationMessage For="@(() => registerModel.Username)" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Please Create a Password</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="registerModel.Password" />
+            <ValidationMessage For="@(() => registerModel.Password)" />
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Please Confirm Your Password</label>
+            <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="registerModel.ConfirmPassword" />
+            <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </div>
+    </EditForm>
+
+    <div class="logo-container">
+        <img src="../Assets/resizedMissionStatementBlue.png" alt="Logo" class="logo" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+    <div class="alert alert-danger">@errorMessage</div>
+    }
+</div>
+
+@code {
+    private Models.Register registerModel = new Models.Register();
+    private string errorMessage;
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/user/register", registerModel);
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationService.NavigateTo("login");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Invalid Username or Password";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage =  $"Invalid Username or Password";
+        }
+    }
+}

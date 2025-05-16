@@ -1,0 +1,73 @@
+﻿@inject HttpClient Http
+@inject NavigationService NavigationService
+@inject IJSRuntime JS
+
+@if (IsVisible)
+{
+    <div class="modal" tabindex="-1" role="dialog" style="display:block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add User</h5>
+                    <button type="button" class="close" aria-label="Close" @onclick="Hide">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" @bind="registerModel.Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">User Email:</label>
+                        <input type="email" class="form-control" id="userEmail" @bind="registerModel.Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="userPassword">User Password:</label>
+                        <input type="password" class="form-control" id="userPassword" @bind="registerModel.Password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="Save">Add User</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Hide">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsVisible { get; set; }
+    private Models.Register registerModel = new Models.Register();
+    private string username;
+    private string userEmail;
+    private string userPassword;
+
+    public void Show()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    private async void Save()
+    {
+        registerModel.ConfirmPassword = registerModel.Password;
+        var response = await Http.PostAsJsonAsync("/user/register", registerModel);
+        if (response.IsSuccessStatusCode)
+        {
+            await JS.InvokeAsync<object>("alert", "User was added successfully.");
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+        }
+        Hide();
+    }
+
+}

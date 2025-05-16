@@ -1,0 +1,31 @@
+﻿.todo-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.todo-form {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.todo-list {
+    margin-top: 20px;
+}
+
+.table {
+    width: 100%;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+button {
+    margin-right: 10px;
+}
+
+.btn {
+    border-radius: 5px;
+}

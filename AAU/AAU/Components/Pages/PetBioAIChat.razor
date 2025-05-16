@@ -1,0 +1,110 @@
+﻿@page "/petbiochat"
+@using System.Text
+@using AAU.Services
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationService NavigationService
+@rendermode InteractiveServer
+
+<h3>Build AI Pet Bio</h3>
+
+<div class="chat-container">
+    <div class="message-container">
+        @foreach (var message in messages)
+        {
+            <div class="message @(message.IsUser ? "user-message" : "bot-message")">
+                @message.Text
+            </div>
+        }
+    </div>
+
+    <div class="input-container">
+        <InputText @bind-Value="userInput" @onkeydown="HandleKeyDown" class="input-field"
+            placeholder="Type your answer..." />
+        <button @onclick="SendMessage" class="send-button">Send</button>
+    </div>
+</div>
+
+@code {
+    private string userInput = string.Empty;
+    private List<Message> messages = new List<Message>();
+    private int questionIndex = 0;
+    private StringBuilder petBioBuilder = new StringBuilder();
+    private readonly string[] questions = new[]
+    {
+        "What species is your pet?",
+        "What is the name of your pet?",
+        "What is the age is your pet?",
+        "What breed is your pet?",
+        "Can you name some characteristics of your pet?"
+    };
+
+    private async Task SendMessage()
+    {
+        if (!string.IsNullOrEmpty(userInput))
+        {
+            messages.Add(new Message { Text = userInput, IsUser = true });
+            StateHasChanged();
+            petBioBuilder.AppendLine($"{questions[questionIndex]} {userInput}");
+            userInput = string.Empty;
+            if (++questionIndex < questions.Length)
+            {
+                messages.Add(new Message { Text = questions[questionIndex], IsUser = false });
+            }
+            else
+            {
+                var response = await SendBioToEndpoint(petBioBuilder.ToString());
+                Console.WriteLine(response);
+                messages.Add(new Message { Text = response, IsUser = false });
+                petBioBuilder.Clear();
+                questionIndex = 0; 
+                StateHasChanged(); 
+            }
+            StateHasChanged(); 
+        }
+    }
+
+
+    private async Task<string> SendBioToEndpoint(string petBio)
+    {
+        try
+        {
+            Console.WriteLine(petBio);
+            var requestContent = new { Prompt = petBio };
+            var response = await Http.PostAsJsonAsync("AI/generatebio", requestContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                return $"Error: {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            return $"Exception: {ex.Message}";
+        }
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            SendMessage();
+        }
+    }
+
+    private class Message
+    {
+        public string Text { get; set; }
+        public bool IsUser { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        messages.Add(new Message { Text = "Hello! We are going to generate an AI pet bio. Let's get started.", IsUser = false });
+        messages.Add(new Message { Text = questions[questionIndex], IsUser = false });
+    }
+}

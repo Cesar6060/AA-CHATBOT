@@ -1,0 +1,6 @@
+@AAU_BE_HostAddress = http://localhost:5052
+
+GET {{AAU_BE_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

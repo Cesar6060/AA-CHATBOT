@@ -1,0 +1,115 @@
+﻿@page "/checklist"
+@inject HttpClient Http
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<h3>Appointment List</h3>
+
+<div class="appointment-container">
+    <div class="appointment-form">
+        <h5>Create New Appointment</h5>
+        <EditForm Model="@newAppointment" OnValidSubmit="AddAppointment">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <InputText id="title" class="form-control" placeholder="Enter appointment description" @bind-Value="newAppointment.Description" />
+            </div>
+            <div class="form-group">
+                <InputDate id="date" class="form-control" @bind-Value="newAppointment.AppointmentDate" />
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="time" @bind="newAppointment.AppointmentTime"/>
+            </div>
+            <button class="btn btn-primary">Add Appointment</button>
+        </EditForm>
+    </div>
+
+    <div class="appointment-list mt-4">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var appointment in appointments)
+            {
+            <tr>
+                <td>
+                    <InputText class="form-control" @bind-Value="appointment.Description" />
+                </td>
+                <td>
+                    <InputDate class="form-control" @bind-Value="appointment.AppointmentDate" />
+                </td>
+                <td>
+                    <input class="form-control" type="time" @bind="appointment.AppointmentTime"/>
+                </td>
+                <td>
+                    <input type="checkbox" @bind="appointment.IsCompleted" />
+                </td>
+                <td>
+                    <button class="btn btn-success btn-sm" @onclick="() => UpdateAppointment(appointment)">Update</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteAppointment(appointment)">Delete</button>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+private List<Appointment> appointments = new List<Appointment>();
+private Appointment newAppointment = new Appointment();
+string userId;
+
+protected override async Task OnAfterRenderAsync(bool firstRender)
+{
+    if (firstRender)
+    {
+        userId = await JS.InvokeAsync<string>("blazorExtensions.GetLocalStorage", "userId");
+        Console.WriteLine("level" + userId);
+        await LoadAppointments();
+        StateHasChanged();
+    }
+}
+
+private async Task LoadAppointments()
+{
+    appointments = await Http.GetFromJsonAsync<List<Appointment>>($"/appointments/{userId}");
+    StateHasChanged();
+}
+
+private async Task AddAppointment()
+{
+    newAppointment.UserId = Convert.ToInt16(userId);
+    var response = await Http.PostAsJsonAsync("/appointments", newAppointment);
+    if (response.IsSuccessStatusCode)
+    {
+        newAppointment = new Appointment(); // Reset form
+        await LoadAppointments(); // Reload the appointment list
+    }
+}
+
+private async Task UpdateAppointment(Appointment appointment)
+{
+    var response = await Http.PutAsJsonAsync($"/appointments/{appointment.Id}", appointment);
+    if (response.IsSuccessStatusCode)
+    {
+        await LoadAppointments();
+    }
+}
+
+private async Task DeleteAppointment(Appointment appointment)
+{
+    var response = await Http.DeleteAsync($"/appointments/delete/{appointment.Id}");
+    if (response.IsSuccessStatusCode)
+    {
+        await LoadAppointments();
+    }
+}
+
+}

@@ -1,0 +1,83 @@
+﻿@page "/settings"
+@using System.ComponentModel.DataAnnotations
+@using AAU.Components.Classes
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<h3>Settings</h3>
+
+<EditForm Model="settingsModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="newEmail" class="form-label">Change Email</label>
+        <InputText id="newEmail" @bind-Value="settingsModel.NewEmail" class="form-control" />
+        <ValidationMessage For="@(() => settingsModel.NewEmail)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="newPassword" class="form-label">Change Password</label>
+        <InputText id="newPassword" @bind-Value="settingsModel.NewPassword" type="password" class="form-control" />
+        <ValidationMessage For="@(() => settingsModel.NewPassword)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    
+</EditForm>
+<br>
+<label>Please Enter an Email to SignUp For Notifications</label>
+<input type="text" class="form-control" id="username" @bind="customerEmail">
+<button @onclick="SendEmail" class="btn btn-primary">Sign Up For Notifications!</button>
+
+@code {
+private SettingsModel settingsModel = new SettingsModel();
+private string successMessage;
+private string errorMessage;
+private string customerEmail;
+
+public async void SendEmail()
+{
+    EmailConfig.ConfigureEmail();
+    var emailConfig = new EmailConfig();
+    await emailConfig.SendEmailAsync("angelsamongus561@gmail.com", customerEmail, "Successful Signup for Notifications!", "Congratulations You will be notified!");
+    await JS.InvokeAsync<object>("alert", "Email sent Successfully! Please check your inbox");
+}
+private async Task HandleValidSubmit()
+{
+try
+{
+var response = await Http.PostAsJsonAsync("/api/settings/update", settingsModel);
+
+if (response.IsSuccessStatusCode)
+{
+successMessage = "Your settings have been updated successfully.";
+errorMessage = null;
+}
+else
+{
+var errorContent = await response.Content.ReadAsStringAsync();
+errorMessage = $"Error: {response.StatusCode}. {errorContent}";
+successMessage = null;
+}
+}
+catch (Exception ex)
+{
+errorMessage = $"An error occurred: {ex.Message}";
+successMessage = null;
+}
+}
+
+public class SettingsModel
+{
+[Required(ErrorMessage = "Email is required")]
+[EmailAddress(ErrorMessage = "Invalid email address")]
+public string NewEmail { get; set; }
+
+[Required(ErrorMessage = "Password is required")]
+[StringLength(100, ErrorMessage = "Password must be at least 6 characters long", MinimumLength = 6)]
+public string NewPassword { get; set; }
+}
+}

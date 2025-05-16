@@ -1,0 +1,95 @@
+﻿@* @using AAU.Services
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+
+<div class="modal fade" id="adminCheckModal" tabindex="-1" aria-labelledby="adminCheckModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="adminCheckModalLabel">Admin Access</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+You have admin access. Would you like to go to the admin portal?
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+<button type="button" class="btn btn-primary" @onclick="GoToAdminPortal">Go to Admin Portal</button>
+</div>
+</div>
+</div>
+</div>
+
+@code {
+private bool isAdmin = false;
+
+protected override async Task OnAfterRenderAsync(bool firstRender)
+{
+if (firstRender)
+{
+var userLevel = await JS.InvokeAsync<string>("blazorExtensions.GetLocalStorage", "userLevel");
+
+if (userLevel == "admin")F
+{
+isAdmin = true;
+await JS.InvokeVoidAsync("blazorExtensions.ShowModal", "adminCheckModal");
+
+StateHasChanged();
+}
+}
+}
+private void GoToAdminPortal()
+{
+NavigationManager.NavigateTo("/admin");
+}
+} *@
+
+@using AAU.Services
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+
+<div class="modal fade" id="adminCheckModal" tabindex="-1" aria-labelledby="adminCheckModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminCheckModalLabel">Admin Access</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                You have admin access. Would you like to go to the admin portal?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" @onclick="GoToAdminPortal">Go to Admin Portal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var userLevel = await JS.InvokeAsync<string>("blazorExtensions.GetLocalStorage", "userLevel");
+
+                if (userLevel == "admin")
+                {
+                    await JS.InvokeVoidAsync("blazorExtensions.ShowModal", "adminCheckModal");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in AdminCheck component: {ex.Message}");
+            }
+        }
+    }
+
+    private void GoToAdminPortal()
+    {
+        NavigationManager.NavigateTo("/admin");
+    }
+}

@@ -1,0 +1,90 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Assets\Group.png" />
+    <None Include="wwwroot\Assets\halo-hi copy.png" />
+    <None Include="wwwroot\Assets\halo-hi copyResize.png" />
+    <None Include="wwwroot\Assets\MainLogoResize.png" />
+    <None Include="wwwroot\Assets\mission statement graphic with AAUPR black.png" />
+    <None Include="wwwroot\Assets\mission statement graphic with AAUPR blue.png" />
+    <None Include="wwwroot\Assets\PDFS\2024 AAUPR Organizational Structure and Email List.pdf" />
+    <None Include="wwwroot\Assets\PDFS\AAUPR Bringing In Your First Foster Dog Mar 2024.pdf" />
+    <None Include="wwwroot\Assets\PDFS\AAUPR Step By Step Adoption Guide Mar 2024.pdf" />
+    <None Include="wwwroot\Assets\PDFS\Foster Checklist_March 2024.pdf" />
+    <None Include="wwwroot\Assets\resizedMissionStatementBlue.png" />
+    <None Include="wwwroot\Assets\StockPhotoCat.png" />
+    <None Include="wwwroot\Assets\StockPhotoDog.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
+    <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Components\Assets\Group.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\halo-hi copy.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\halo-hi copyResize.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\MainLogoResize.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\mission statement graphic with AAUPR black.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\mission statement graphic with AAUPR blue.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\resizedMissionStatementBlue.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\StockPhotoDog.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\PDFS\2024 AAUPR Organizational Structure and Email List.pdf">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\PDFS\AAUPR Bringing In Your First Foster Dog Mar 2024.pdf">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\PDFS\AAUPR Step By Step Adoption Guide Mar 2024.pdf">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\PDFS\Foster Checklist_March 2024.pdf">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Components\Assets\StockPhotoCat.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

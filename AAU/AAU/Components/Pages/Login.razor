@@ -1,0 +1,88 @@
+﻿@page "/login"
+@page "/"
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationService NavigationService
+@rendermode InteractiveServer
+@inject AdminService AS
+<h3>Login</h3>
+
+<div class="login-container">
+    <EditForm Model="@loginModel" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <InputText id="username" class="form-control" @bind-Value="loginModel.username" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.password" />
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="button" @onclick="() => NavigationService.NavigateTo(register)" class="btn btn-secondary">Register</button>
+        </div>
+    </EditForm>
+    
+    <div class="logo-container">
+        <img src="../Assets/resizedMissionStatementBlue.png" alt="Logo" class="logo" />
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+<div class="alert alert-danger">@errorMessage</div>
+}
+
+@code {
+private Models.Login loginModel = new Models.Login();
+private string errorMessage;
+private string register = "register";
+
+private async Task HandleValidSubmit()
+{
+    try
+    {
+        var response = await Http.PostAsJsonAsync("/user/login", loginModel);
+        if (response.IsSuccessStatusCode)
+        {
+            // Read the response content
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            // Assuming LoginResponse has properties for UserId and UserLevel
+            if (content != null)
+            {
+                Console.WriteLine("Login Success");
+                AS.SetUserLevel(content.UserLevel);
+                // Save userId and userLevel to local storage
+                await JS.InvokeVoidAsync("blazorExtensions.SetLocalStorage", "userId", content.UserId);
+                await JS.InvokeVoidAsync("blazorExtensions.SetLocalStorage", "userLevel", content.UserLevel);
+                NavigationService.NavigateTo("profile");
+            }
+        }
+        else
+        {
+            // Display unauthenticated message to user
+            var errorContent = await response.Content.ReadAsStringAsync();
+            errorMessage = $"Error: {response.StatusCode}. {errorContent}";
+        }
+    }
+    catch (Exception ex)
+    {
+        // Handle exception
+        errorMessage = $"An error occurred: {ex.Message}";
+    }
+}
+
+public class LoginResponse
+{
+    public string Message { get; set; }
+    public int UserId { get; set; }
+    public string UserLevel { get; set; }
+}
+}
+

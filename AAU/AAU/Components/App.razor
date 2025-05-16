@@ -1,0 +1,65 @@
+﻿@* <!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<base href="/" />
+<link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+<link rel="stylesheet" href="app.css" />
+<link rel="stylesheet" href="AAU.styles.css" />
+<link rel="icon" type="image/png" href="favicon.png" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
+<script src="/js/cookies.js"></script>
+<script src="/js/calendar.js"></script>
+<HeadOutlet />
+</head>
+
+<body>
+<Routes />
+</body>
+
+</html> *@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+
+    <!-- CSS files -->
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="AAU.styles.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+    <!-- Additional third-party CSS (if any) -->
+    <!-- Add other CSS files here -->
+
+    <!-- HeadOutlet allows components to add to the head dynamically -->
+    <HeadOutlet />
+</head>
+
+<body>
+    <!-- Application body -->
+    <Routes />
+
+    <!-- Include Bootstrap JavaScript Bundle (with Popper) -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+    <!-- Include your custom JavaScript -->
+    <script src="js/site.js"></script>
+
+    <!-- Include other custom scripts -->
+    <script src="js/cookies.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
+
+    <!-- Include Blazor scripts -->
+    <script src="_framework/blazor.server.js"></script>
+</body>
+
+</html>
