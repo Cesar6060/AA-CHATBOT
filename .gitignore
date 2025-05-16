@@ -59,3 +59,9 @@ Thumbs.db
 
 # Windows
 Thumbs.db
+
+# Sensitive configuration files
+.env
+appsettings.json
+appsettings.Development.json
+appsettings.*.json
